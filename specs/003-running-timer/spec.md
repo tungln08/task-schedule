@@ -14,6 +14,8 @@
 - Q: Tính từ đâu? → A: từ giờ Start do máy chủ ghi, "bây giờ" lấy theo giờ máy chủ (đã bù lệch đồng hồ), không theo giờ máy nhân viên.
 - Q: Đang Kẹt thì sao? → A: vẫn đếm (việc chưa Xong là vẫn đang tốn thời gian). Bấm Xong thì đồng hồ biến mất, chỉ còn "Mất: …".
 - Không đổi backend.
+- Phát sinh khi test: trình duyệt giữ `style.css` cũ (GitHub Pages cache ~10 phút) → `index.html` gắn `?v=<phiên bản>`
+  vào `style.css`, `config.js`, `app.js`; **mỗi lần cập nhật phải tăng số `v`**.
 
 ## Requirements
 - **FR-001**: Việc đã Start, chưa Xong hiện một dòng nổi bật màu xanh dương (gộp chú thích + đồng hồ, đúng câu ví dụ):
