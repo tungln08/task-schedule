@@ -167,7 +167,19 @@
     head.appendChild(el('span', 'task-num', t.done ? '✔ ' + t.id : t.id));
     head.appendChild(el('span', 'task-name', t.name));
     li.appendChild(head);
-    if (t.note) li.appendChild(el('div', 'task-note', t.note));
+    var lines = t.note.split(/\r?\n/)
+      .map(function (s) { return s.replace(/^\d+\.\d+\.?\s+/, '').trim(); })
+      .filter(Boolean);
+    if (lines.length) {
+      var steps = el('div', 'task-steps');
+      lines.forEach(function (text, i) {
+        var row = el('div', 'step');
+        row.appendChild(el('b', 'step-num', t.id + '.' + (i + 1)));
+        row.appendChild(el('span', null, text));
+        steps.appendChild(row);
+      });
+      li.appendChild(steps);
+    }
 
     var open = inWindow(t.window);
     if (t.window && !t.done) li.appendChild(el('div', 'task-window', (open ? '✅ ' : '⏰ ') + windowLabel(t.window)));

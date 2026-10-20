@@ -10,41 +10,89 @@ var SHEET_TASKS = 'DanhSachViec';
 var SHEET_TODAY = 'HomNay';
 var MAX_STUCK_LEN = 500;
 
+// Ghi chú: mỗi phần tử là một dòng trong ô; trang web tự đánh số STT.1, STT.2…
 var DEFAULT_TASKS = [
-  [1, 'Tăng budget buổi sáng (7h–8h)', 'Tăng tay trên Amazon Ads. Camp hết budget + ACOS < 17% → x2 budget. Đánh dấu camp đã tăng. Báo cáo: áo gì, campaign nào, chỉ số.', true, ''],
-  [2, 'Lọc vi phạm mẫu từ tool cào idea Etsy', 'Gồm load ảnh lần 1. Mẫu bị loại phải ghi rõ hiểu là vi phạm gì.', true, ''],
-  [3, 'Chạy check POD design', 'Gồm đặt lại tên sản phẩm + load ảnh lần 2: ảnh nào tải PNG từ Amazon, ảnh nào tách nền ChatGPT.', true, ''],
-  [4, 'Tách nền và xử lý ảnh (không chờ duyệt)', 'Trừ ảnh bị đánh dấu vi phạm. Có trên Amazon: tool download PNG → crop → làm nét. Chưa có: ChatGPT → bg_remove 4500x5400. Cuối: nén + xoá metadata.', true, ''],
-  [5, 'Up áo', 'Sau khi được duyệt.', true, ''],
-  [6, 'Kiểm tra Ads buổi chiều', 'Camp đã tăng budget sáng nay: thêm đơn không, ACOS đổi nhiều không. Báo cáo: áo gì, campaign nào, chỉ số.', true, ''],
-  [7, 'Thống kê áo up hôm nay', 'Báo cáo: áo gì, số lượng sale, giá, rank.', true, ''],
-  [8, 'Tăng giá áo', 'TẠM DỪNG — anh Tung sẽ nói cụ thể khi cần.', false, ''],
-  [9, 'Check camp-A để tạo quảng cáo Key', 'Tool Auto Budget Bulk upload download, mục Bulk upload download.', true, ''],
-  [10, 'Tổng hợp doanh số tất cả account', 'Tool MBA Monitor. Báo cáo: doanh thu, chi phí Ads, lợi nhuận ròng thực tế.', true, ''],
-  [11, 'Tạo keyword quảng cáo', 'Tool Auto Budget Bulk upload download, mục Tạo keyword.', true, ''],
-  [12, 'Chỉnh Ads', 'Công cụ auto excel.', true, ''],
-  [13, 'Tạo quảng cáo', 'Tool Auto Budget Bulk upload download, mục Bulk upload download.', true, ''],
-  [14, 'Kiểm tra trước khi đi ngủ', '3 account Ads: camp nào out of budget, đủ điều kiện (như việc 1) thì tăng luôn. Báo cáo: áo gì, campaign nào, chỉ số.', true, ''],
-  [15, 'Chạy Etsy Auto Next trước khi ngủ', 'Chạy lúc nào trong khoảng 0h–7h sáng cũng được.', true, '00:00-07:00']
+  [1, 'Tăng budget buổi sáng (7h–8h)', [
+    'Làm bằng tay trên Amazon Ads (chưa dùng tool Auto Budget để tăng budget)',
+    'Tìm các campaign đã hết budget VÀ có ACOS dưới 17%',
+    'Tăng gấp đôi budget các campaign đó',
+    'Đánh dấu lại các campaign đã tăng để buổi chiều kiểm tra (việc 6)',
+    'Báo cáo: áo gì, campaign nào, chỉ số ra sao'], true, ''],
+  [2, 'Lọc vi phạm mẫu từ tool cào idea Etsy', [
+    'Load ảnh sản phẩm lần 1',
+    'Lọc vi phạm các mẫu lấy từ tool cào idea Etsy',
+    'Mẫu nào bị loại phải ghi rõ mình hiểu đó là loại vi phạm gì'], true, ''],
+  [3, 'Chạy check POD design', [
+    'Chạy tool check POD design',
+    'Đặt lại tên sản phẩm',
+    'Load ảnh sản phẩm lần 2',
+    'Chốt ảnh nào tải được luôn file PNG từ Amazon',
+    'Chốt ảnh nào phải tách nền bằng ChatGPT'], true, ''],
+  [4, 'Tách nền và xử lý ảnh (không chờ duyệt)', [
+    'Làm xong việc 3 thì tách nền luôn, không ngồi chờ duyệt',
+    'Ảnh bị tool check đánh dấu vi phạm thì chưa tách vội, tách sau',
+    'Mẫu đã có trên Amazon: tool download PNG từ Amazon → crop → làm nét',
+    'Mẫu chưa có trên Amazon: tách nền bằng ChatGPT → tool bg_remove để về size 4500x5400',
+    'Cuối cùng: nén ảnh + xoá metadata'], true, ''],
+  [5, 'Up áo', [
+    'Up áo sau khi được duyệt'], true, ''],
+  [6, 'Kiểm tra Ads buổi chiều', [
+    'Xem các campaign đã tăng budget sáng nay',
+    'Có thêm đơn mới không',
+    'ACOS có thay đổi nhiều không',
+    'Báo cáo: áo gì, campaign nào, chỉ số ra sao'], true, ''],
+  [7, 'Thống kê áo up hôm nay', [
+    'Thống kê các áo đã up hôm nay',
+    'Báo cáo: áo gì, số lượng sale, giá, rank'], true, ''],
+  [8, 'Tăng giá áo', [
+    'TẠM DỪNG — khi nào cần, anh Tung sẽ nói cụ thể áo nào, tăng lên bao nhiêu'], false, ''],
+  [9, 'Check camp-A để tạo quảng cáo Key', [
+    'Check các camp-A để tạo quảng cáo Key',
+    'Dùng tool Auto Budget Bulk upload download, mục Bulk upload download'], true, ''],
+  [10, 'Tổng hợp doanh số tất cả account', [
+    'Dùng tool MBA Monitor tổng hợp doanh số tất cả account',
+    'Báo cáo: doanh thu, chi phí Ads, lợi nhuận ròng thực tế'], true, ''],
+  [11, 'Tạo keyword quảng cáo', [
+    'Dùng tool Auto Budget Bulk upload download, mục Tạo keyword'], true, ''],
+  [12, 'Chỉnh Ads', [
+    'Chỉnh Ads bằng công cụ auto excel'], true, ''],
+  [13, 'Tạo quảng cáo', [
+    'Dùng tool Auto Budget Bulk upload download, mục Bulk upload download'], true, ''],
+  [14, 'Kiểm tra trước khi đi ngủ', [
+    'Xem 3 account quảng cáo có campaign nào báo out of budget không',
+    'Campaign nào đủ điều kiện (hết budget + ACOS dưới 17%) thì tăng budget luôn',
+    'Báo cáo: áo gì, campaign nào, chỉ số ra sao'], true, ''],
+  [15, 'Chạy Etsy Auto Next trước khi ngủ', [
+    'Chạy tool Etsy Auto Next',
+    'Chạy lúc nào trong khoảng 0h–7h sáng cũng được'], true, '00:00-07:00']
 ];
 
 /** Chạy 1 lần để tạo 2 tab và danh sách việc mặc định. Không ghi đè nếu tab đã có. */
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var t = ss.getSheetByName(SHEET_TASKS);
-  if (!t) {
-    t = ss.insertSheet(SHEET_TASKS);
-    t.getRange(1, 1, 1, 5).setValues([['STT', 'Tên việc', 'Ghi chú', 'Hoạt động', 'Khung giờ']]).setFontWeight('bold');
-    t.getRange(2, 1, DEFAULT_TASKS.length, 5).setValues(DEFAULT_TASKS);
-    t.getRange(2, 4, DEFAULT_TASKS.length, 1).insertCheckboxes();
-    t.getRange(2, 5, DEFAULT_TASKS.length, 1).setNumberFormat('@');
-    t.setFrozenRows(1);
-  }
+  if (!ss.getSheetByName(SHEET_TASKS)) writeDefaultTasks_(ss.insertSheet(SHEET_TASKS));
   var d = ss.getSheetByName(SHEET_TODAY);
   if (!d) {
     d = ss.insertSheet(SHEET_TODAY);
     writeTodayHeader_(d);
   }
+}
+
+/** Ghi đè toàn bộ tab DanhSachViec về danh sách mặc định (mất mọi sửa đổi trong tab đó). */
+function resetDanhSachViec() {
+  var t = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_TASKS);
+  t.clear();
+  writeDefaultTasks_(t);
+}
+
+function writeDefaultTasks_(t) {
+  var rows = DEFAULT_TASKS.map(function (r) { return [r[0], r[1], r[2].join('\n'), r[3], r[4]]; });
+  t.getRange(1, 1, 1, 5).setValues([['STT', 'Tên việc', 'Ghi chú', 'Hoạt động', 'Khung giờ']]).setFontWeight('bold');
+  t.getRange(2, 5, rows.length, 1).setNumberFormat('@');
+  t.getRange(2, 1, rows.length, 5).setValues(rows);
+  t.getRange(2, 4, rows.length, 1).insertCheckboxes();
+  t.getRange(2, 3, rows.length, 1).setWrap(true);
+  t.setFrozenRows(1);
 }
 
 function writeTodayHeader_(d) {

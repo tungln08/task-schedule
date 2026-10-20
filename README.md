@@ -31,6 +31,9 @@ Sau ~1 phút có link `https://<tên-github>.github.io/<tên-repo>/` — gửi l
 - **Sửa danh sách việc:** sửa tab `DanhSachViec` (STT, Tên việc, Ghi chú, Hoạt động, Khung giờ). Bỏ tích *Hoạt động*
   để ẩn việc (VD việc 8 đang tạm dừng). *Khung giờ* dạng `00:00-07:00`, để trống = lúc nào cũng được.
   Trang tự cập nhật trong vòng 1 phút.
+- **Ghi chú nhiều dòng:** trong ô *Ghi chú*, mỗi ý một dòng (xuống dòng trong ô bằng **Ctrl+Enter**). Không cần gõ số —
+  trang tự đánh số `1.1`, `1.2`…
+- **Khôi phục danh sách mặc định:** trong Apps Script chọn hàm `resetDanhSachViec` → Run (ghi đè toàn bộ tab `DanhSachViec`).
 - **Xem kết quả:** mở trang web hoặc tab `HomNay` (giờ bắt đầu, giờ xong, số phút, nội dung kẹt).
   Dữ liệu của một ngày còn đến **7h sáng hôm sau** thì bị xoá.
 - **Sửa trang web:** mỗi lần sửa `style.css` / `app.js` / `config.js` phải tăng số `?v=` trong `index.html`,

@@ -85,7 +85,9 @@ main { max-width: 720px; margin: 0 auto; padding: 16px; }
 }
 .task.is-done .task-num { background: none; border-radius: 0; color: var(--green); white-space: nowrap; }
 .task-name { font-size: 18px; font-weight: 700; }
-.task-note { color: var(--muted); font-size: 14px; margin: 6px 0 0 40px; }
+.task-steps { margin: 6px 0 0 40px; font-size: 14px; color: #344054; }
+.step { display: flex; gap: 8px; padding: 2px 0; }
+.step-num { flex: none; min-width: 34px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .task-window { color: var(--orange); font-size: 14px; font-weight: 600; margin: 6px 0 0 40px; }
 
 .task-times { margin: 10px 0 0 40px; font-size: 15px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
