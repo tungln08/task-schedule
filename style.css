@@ -91,6 +91,17 @@ main { max-width: 720px; margin: 0 auto; padding: 16px; }
 .task-times { margin: 10px 0 0 40px; font-size: 15px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
 .task-times b { font-variant-numeric: tabular-nums; }
 
+.running {
+  margin: 10px 0 0 40px;
+  padding: 8px 12px;
+  background: #d1e9ff;
+  color: #194185;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.running-clock { font-variant-numeric: tabular-nums; color: var(--blue); }
+
 .stuck-list {
   margin: 10px 0 0 40px;
   padding: 8px 12px;

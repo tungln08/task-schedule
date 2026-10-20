@@ -119,6 +119,18 @@
     var list = $('tasks');
     list.textContent = '';
     tasks.forEach(function (t) { list.appendChild(renderTask(t)); });
+    tickClocks();
+  }
+
+  // Đồng hồ việc đang làm: chỉ cập nhật chữ, không vẽ lại cả trang.
+  function tickClocks() {
+    var now = Date.now() + clockSkew;
+    var clocks = document.querySelectorAll('.running-clock');
+    for (var i = 0; i < clocks.length; i++) {
+      var sec = Math.max(0, Math.floor((now - new Date(clocks[i].getAttribute('data-start')).getTime()) / 1000));
+      var h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+      clocks[i].textContent = (h ? h + ' giờ ' + pad(m) : m) + ' phút ' + pad(s) + ' giây';
+    }
   }
 
   // Giờ Kẹt chỉ có "HH:mm": giờ trước mốc reset thuộc ngày hôm sau của ngày làm việc.
@@ -168,6 +180,15 @@
         var m = el('span', null, 'Mất: '); m.appendChild(el('b', null, fmtMinutes(t.minutes))); times.appendChild(m);
       }
       li.appendChild(times);
+    }
+
+    if (t.start && !t.done) {
+      var run = el('div', 'running', '▶ Bạn đang làm phần việc này được ');
+      var clock = el('b', 'running-clock');
+      clock.setAttribute('data-start', t.start);
+      run.appendChild(clock);
+      run.appendChild(document.createTextNode(' rồi'));
+      li.appendChild(run);
     }
 
     if (t.stuck.length) {
@@ -232,5 +253,6 @@
 
   load();
   setInterval(function () { if (!busy && !document.hidden) load(); }, REFRESH_MS);
+  setInterval(tickClocks, 1000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
 })();
