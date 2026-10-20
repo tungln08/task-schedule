@@ -114,16 +114,45 @@
     $('statusSub').textContent = 'Xong ' + doneCount + '/' + tasks.length + ' việc · Ngày ' + p[2] + '/' + p[1] +
       ' · tự làm mới lúc ' + state.resetHour + 'h sáng';
 
+    $('elapsed').textContent = elapsedText(tasks);
+
     var list = $('tasks');
     list.textContent = '';
     tasks.forEach(function (t) { list.appendChild(renderTask(t)); });
   }
 
+  // Giờ Kẹt chỉ có "HH:mm": giờ trước mốc reset thuộc ngày hôm sau của ngày làm việc.
+  function stuckTimeMs(hhmm) {
+    var m = /^(\d{1,2}):(\d{2})$/.exec(hhmm || '');
+    if (!m) return null;
+    var p = state.workday.split('-');
+    var dayMs = Date.UTC(+p[0], +p[1] - 1, +p[2]) + (+m[1] < state.resetHour ? 24 * 3600 * 1000 : 0);
+    return dayMs + (+m[1] * 60 + +m[2]) * 60000 - VN_OFFSET_MS;
+  }
+
+  // Từ Start sớm nhất đến lần bấm Xong/Kẹt gần nhất.
+  function elapsedText(tasks) {
+    var first = null, last = null;
+    tasks.forEach(function (t) {
+      if (t.start) {
+        var s = new Date(t.start).getTime();
+        if (first === null || s < first) first = s;
+      }
+      var marks = t.stuck.map(function (k) { return stuckTimeMs(k.time); });
+      if (t.done) marks.push(new Date(t.done).getTime());
+      marks.forEach(function (ms) { if (ms !== null && (last === null || ms > last)) last = ms; });
+    });
+    if (first === null || last === null) return 'Tổng thời gian đã làm: chưa có — sẽ tính khi bấm Xong hoặc Kẹt';
+    var mins = Math.max(0, Math.round((last - first) / 60000));
+    return 'Tổng thời gian đã làm: ' + fmtMinutes(mins) +
+      ' (từ ' + fmtTime(new Date(first).toISOString()) + ' đến ' + fmtTime(new Date(last).toISOString()) + ')';
+  }
+
   function renderTask(t) {
-    var li = el('li', 'task' + (t.done ? ' is-done' : t.start ? ' is-running' : ''));
+    var li = el('li', 'task' + (t.done ? ' is-done' : t.start ? ' is-running' : ' is-todo'));
 
     var head = el('div', 'task-head');
-    head.appendChild(el('span', 'task-num', t.id));
+    head.appendChild(el('span', 'task-num', t.done ? '✔ ' + t.id : t.id));
     head.appendChild(el('span', 'task-name', t.name));
     li.appendChild(head);
     if (t.note) li.appendChild(el('div', 'task-note', t.note));
@@ -151,19 +180,25 @@
     }
 
     var actions = el('div', 'task-actions');
-    actions.appendChild(button('Start', 'btn-start', busy || !open || !!t.start, function () { send('start', t.id); }));
-    actions.appendChild(button('Kẹt', 'btn-stuck', busy || !open || !t.start || !!t.done, function () { openStuck(t); }));
-    actions.appendChild(button('Xong', 'btn-done', busy || !open || !t.start || !!t.done, function () { send('done', t.id); }));
+    actions.appendChild(button('Start', 'btn-start', 'Bấm khi bắt đầu làm việc này',
+      busy || !open || !!t.start, function () { send('start', t.id); }));
+    actions.appendChild(button('Kẹt', 'btn-stuck', 'Bấm khi gặp lỗi, không làm tiếp được',
+      busy || !open || !t.start || !!t.done, function () { openStuck(t); }));
+    actions.appendChild(button('Xong', 'btn-done', 'Bấm khi đã làm xong việc này',
+      busy || !open || !t.start || !!t.done, function () { send('done', t.id); }));
     li.appendChild(actions);
     return li;
   }
 
-  function button(label, cls, disabled, onClick) {
+  function button(label, cls, hint, disabled, onClick) {
+    var wrap = el('div', 'action');
     var b = el('button', 'btn ' + cls, label);
     b.type = 'button';
     b.disabled = disabled;
     b.addEventListener('click', onClick);
-    return b;
+    wrap.appendChild(b);
+    wrap.appendChild(el('small', 'hint', hint));
+    return wrap;
   }
 
   // ---------- Hộp báo Kẹt ----------
