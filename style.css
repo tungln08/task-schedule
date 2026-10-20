@@ -1,0 +1,141 @@
+:root {
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --text: #1d2330;
+  --muted: #667085;
+  --line: #e3e6eb;
+  --red: #d92d20;
+  --red-bg: #fee4e2;
+  --green: #079455;
+  --green-bg: #dcfae6;
+  --blue: #1570ef;
+  --orange: #dc6803;
+  --orange-bg: #fef0c7;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+/* Thanh trạng thái luôn nhìn thấy */
+.status {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 14px 16px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+}
+.status.pending { background: var(--red); }
+.status.complete { background: var(--green); }
+#statusText { font-size: 20px; font-weight: 700; }
+.status-sub { font-size: 14px; opacity: .9; margin-top: 2px; }
+
+main { max-width: 720px; margin: 0 auto; padding: 16px; }
+
+.error {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+
+.task {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+.task.is-running { border-color: var(--blue); }
+.task.is-done { border-color: var(--green); background: #f6fef9; }
+
+.task-head { display: flex; gap: 10px; align-items: baseline; }
+.task-num {
+  flex: none;
+  min-width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background: var(--line);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+.task.is-done .task-num { background: var(--green); color: #fff; }
+.task-name { font-size: 18px; font-weight: 700; }
+.task-note { color: var(--muted); font-size: 14px; margin: 6px 0 0 40px; }
+.task-window { color: var(--orange); font-size: 14px; font-weight: 600; margin: 6px 0 0 40px; }
+
+.task-times { margin: 10px 0 0 40px; font-size: 15px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.task-times b { font-variant-numeric: tabular-nums; }
+
+.stuck-list {
+  margin: 10px 0 0 40px;
+  padding: 8px 12px;
+  background: var(--orange-bg);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.stuck-list strong { color: var(--orange); }
+.stuck-list ul { margin: 4px 0 0; padding-left: 18px; }
+
+.task-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 8px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #fff;
+  font-family: inherit;
+}
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn-start { background: var(--blue); }
+.btn-stuck { background: var(--orange); }
+.btn-done { background: var(--green); }
+.btn-ghost { background: var(--line); color: var(--text); }
+
+/* Hộp báo Kẹt */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .45);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 20;
+}
+.overlay[hidden] { display: none; }
+.dialog {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 18px;
+  width: 100%;
+  max-width: 480px;
+}
+.dialog h2 { margin: 0 0 4px; color: var(--orange); }
+.dialog-task { margin: 0 0 12px; font-weight: 600; }
+.dialog label { display: block; margin-bottom: 6px; }
+.dialog textarea {
+  width: 100%;
+  font: inherit;
+  padding: 10px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  resize: vertical;
+}
+.dialog-actions { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; margin-top: 12px; }

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Việc Hôm Nay</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="statusBar" class="status pending">
+    <div id="statusText">Đang tải…</div>
+    <div id="statusSub" class="status-sub"></div>
+  </header>
+
+  <main>
+    <div id="error" class="error" hidden></div>
+    <ol id="tasks" class="tasks"></ol>
+  </main>
+
+  <div id="stuckDialog" class="overlay" hidden>
+    <form id="stuckForm" class="dialog">
+      <h2>Báo Kẹt</h2>
+      <p id="stuckTaskName" class="dialog-task"></p>
+      <label for="stuckText">Đang kẹt chuyện gì? Ghi rõ ra:</label>
+      <textarea id="stuckText" rows="4" maxlength="500" placeholder="VD: Tool bg_remove báo lỗi, không ra ảnh 4500x5400"></textarea>
+      <div class="dialog-actions">
+        <button type="button" id="stuckCancel" class="btn btn-ghost">Huỷ</button>
+        <button type="submit" id="stuckSend" class="btn btn-stuck">Gửi báo Kẹt</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
