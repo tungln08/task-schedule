@@ -25,6 +25,7 @@ var DEFAULT_TASKS = [
   [3, 'Chạy check POD design', [
     'Chạy tool check POD design',
     'Đặt lại tên sản phẩm',
+    'Sau khi đặt lại tên xong thì bấm "Bắt đầu kiểm tra"',
     'Load ảnh sản phẩm lần 2',
     'Chốt ảnh nào tải được luôn file PNG từ Amazon',
     'Chốt ảnh nào phải tách nền bằng ChatGPT'], true, ''],

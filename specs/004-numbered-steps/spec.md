@@ -15,6 +15,10 @@ thay vì để hết vào 1 dòng như hiện tại."
 - Q: Nội dung? → A: tách từ `CONTEXT.md` mục 3 (mỗi ý một dòng), ghi đè cột Ghi chú hiện có bằng hàm
   `resetDanhSachViec()` chạy 1 lần trong Apps Script editor. Không đổi doGet/doPost → **không cần triển khai lại** Web app.
 
+- 2026-10-21 (bổ sung): Việc 3 thêm bước sau "Đặt lại tên sản phẩm": **"Sau khi đặt lại tên xong thì bấm 'Bắt đầu kiểm tra'"**
+  (thành 3.3; các bước sau lùi số). Sửa trong `DEFAULT_TASKS` và sửa trực tiếp ô Ghi chú việc 3 trên Sheet
+  (không chạy `resetDanhSachViec` để không ghi đè các sửa đổi khác).
+
 ## Requirements
 - **FR-001**: Dưới tên việc, mỗi dòng ghi chú hiện thành một dòng riêng, có số `STT.k` (k bắt đầu từ 1) in đậm phía trước.
 - **FR-002**: Dòng trống trong ô bị bỏ qua.
