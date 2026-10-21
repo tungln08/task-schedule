@@ -134,11 +134,13 @@
   }
 
   // Giờ Kẹt chỉ có "HH:mm": giờ trước mốc reset thuộc ngày hôm sau của ngày làm việc.
-  function stuckTimeMs(hhmm) {
+  // Việc chạy đêm (reset 0h) thì luôn thuộc ngày lịch hiện tại.
+  function stuckTimeMs(t, hhmm) {
     var m = /^(\d{1,2}):(\d{2})$/.exec(hhmm || '');
     if (!m) return null;
-    var p = state.workday.split('-');
-    var dayMs = Date.UTC(+p[0], +p[1] - 1, +p[2]) + (+m[1] < state.resetHour ? 24 * 3600 * 1000 : 0);
+    var p = (t.midnight ? state.nightday : state.workday).split('-');
+    var next = !t.midnight && +m[1] < state.resetHour;
+    var dayMs = Date.UTC(+p[0], +p[1] - 1, +p[2]) + (next ? 24 * 3600 * 1000 : 0);
     return dayMs + (+m[1] * 60 + +m[2]) * 60000 - VN_OFFSET_MS;
   }
 
@@ -150,7 +152,7 @@
         var s = new Date(t.start).getTime();
         if (first === null || s < first) first = s;
       }
-      var marks = t.stuck.map(function (k) { return stuckTimeMs(k.time); });
+      var marks = t.stuck.map(function (k) { return stuckTimeMs(t, k.time); });
       if (t.done) marks.push(new Date(t.done).getTime());
       marks.forEach(function (ms) { if (ms !== null && (last === null || ms > last)) last = ms; });
     });

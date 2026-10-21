@@ -1,7 +1,7 @@
 # Bảng Việc Hôm Nay
 
 Trang web cho nhân viên bấm **Start / Kẹt / Xong** từng việc. Giờ do máy chủ Google ghi. Thanh trên đầu chỉ xanh
-"Đã hoàn thành công việc" khi mọi việc có đủ Start + Xong. Mỗi ngày tự reset lúc **7h sáng**, không lưu lịch sử.
+"Đã hoàn thành công việc" khi mọi việc có đủ Start + Xong. Mỗi ngày tự reset lúc **2h sáng** (riêng việc chạy đêm có Khung giờ bắt đầu `00:00`, VD việc 15, reset lúc **0h**), không lưu lịch sử.
 
 - Trang web: GitHub Pages (`index.html`, `style.css`, `app.js`, `config.js`)
 - Dữ liệu: Google Sheet + Apps Script (`apps-script/Code.gs`)
@@ -35,7 +35,7 @@ Sau ~1 phút có link `https://<tên-github>.github.io/<tên-repo>/` — gửi l
   trang tự đánh số `1.1`, `1.2`…
 - **Khôi phục danh sách mặc định:** trong Apps Script chọn hàm `resetDanhSachViec` → Run (ghi đè toàn bộ tab `DanhSachViec`).
 - **Xem kết quả:** mở trang web hoặc tab `HomNay` (giờ bắt đầu, giờ xong, số phút, nội dung kẹt).
-  Dữ liệu của một ngày còn đến **7h sáng hôm sau** thì bị xoá.
+  Dữ liệu của một ngày còn đến **2h sáng hôm sau** thì bị xoá (việc chạy đêm: đến 0h).
 - **Sửa trang web:** mỗi lần sửa `style.css` / `app.js` / `config.js` phải tăng số `?v=` trong `index.html`,
   nếu không trình duyệt nhân viên có thể dùng bản cũ.
 - **Sửa `Code.gs` sau này:** dán code mới → **Deploy → Manage deployments → ✏ Edit → Version: New version → Deploy**

@@ -5,7 +5,8 @@
  */
 
 var TZ = 'Asia/Ho_Chi_Minh';
-var RESET_HOUR = 7;               // ngày làm việc bắt đầu / reset lúc 7h sáng
+var RESET_HOUR = 2;               // ngày làm việc bắt đầu / reset lúc 2h sáng
+                                  // riêng việc có Khung giờ bắt đầu 00:00 (chạy đêm) reset lúc 0h
 var SHEET_TASKS = 'DanhSachViec';
 var SHEET_TODAY = 'HomNay';
 var MAX_STUCK_LEN = 500;
@@ -136,15 +137,43 @@ function workdayKey_(now) {
   return Utilities.formatDate(new Date(now.getTime() - RESET_HOUR * 3600 * 1000), TZ, 'yyyy-MM-dd');
 }
 
-/** Sang ngày làm việc mới thì xoá sạch dữ liệu HomNay (không lưu lịch sử). */
+/** Ngày lịch (reset lúc 0h) — dùng cho việc chạy đêm. */
+function nightKey_(now) {
+  return Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
+}
+
+/** Việc chạy đêm = Khung giờ bắt đầu từ 00:00 → reset lúc 0h thay vì RESET_HOUR. */
+function isMidnightTask_(t) {
+  return /^0?0:00\s*-/.test(t.window || '');
+}
+
+/**
+ * Qua 2h: xoá dữ liệu HomNay của mọi việc, trừ việc chạy đêm. Qua 0h: xoá dữ liệu việc chạy đêm.
+ * Không lưu lịch sử.
+ */
 function ensureWorkday_(now) {
   var props = PropertiesService.getScriptProperties();
   var key = workdayKey_(now);
-  if (props.getProperty('WORKDAY') === key) return key;
+  var night = nightKey_(now);
+  var newDay = props.getProperty('WORKDAY') !== key;
+  var newNight = props.getProperty('NIGHTDAY') !== night;
+  if (!newDay && !newNight) return key;
+
+  var midnight = {};
+  readTasks_().forEach(function (t) { if (isMidnightTask_(t)) midnight[t.id] = true; });
   var d = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_TODAY);
+  var rows = d.getLastRow() > 1 ? d.getRange(2, 1, d.getLastRow() - 1, 6).getValues() : [];
+  var keep = rows.filter(function (r) {
+    var isNight = midnight[String(r[0]).trim()] === true;
+    return isNight ? !newNight : !newDay;
+  });
   d.clear();
   writeTodayHeader_(d);
-  props.setProperty('WORKDAY', key);
+  if (keep.length) {
+    d.getRange(2, 1, keep.length, 6).setValues(keep);
+    d.getRange(2, 3, keep.length, 2).setNumberFormat('HH:mm:ss');
+  }
+  props.setProperties({ WORKDAY: key, NIGHTDAY: night });
   return key;
 }
 
@@ -191,14 +220,14 @@ function buildState_() {
   var tasks = readTasks_().map(function (t) {
     var s = today[t.id] || {};
     return {
-      id: t.id, name: t.name, note: t.note, window: t.window,
+      id: t.id, name: t.name, note: t.note, window: t.window, midnight: isMidnightTask_(t),
       start: s.start ? s.start.toISOString() : null,
       done: s.done ? s.done.toISOString() : null,
       minutes: s.start && s.done ? minutesBetween_(s.start, s.done) : null,
       stuck: s.stuck || []
     };
   });
-  return { workday: workday, serverNow: now.toISOString(), resetHour: RESET_HOUR, tasks: tasks };
+  return { workday: workday, nightday: nightKey_(now), serverNow: now.toISOString(), resetHour: RESET_HOUR, tasks: tasks };
 }
 
 // ---------- Ghi dữ liệu ----------
