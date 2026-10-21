@@ -42,9 +42,6 @@ var DEFAULT_TASKS = [
     'Có thêm đơn mới không',
     'ACOS có thay đổi nhiều không',
     'Báo cáo: áo gì, campaign nào, chỉ số ra sao'], true, ''],
-  [7, 'Thống kê áo up hôm nay', [
-    'Thống kê các áo đã up hôm nay',
-    'Báo cáo: áo gì, số lượng sale, giá, rank'], true, ''],
   [8, 'Tăng giá áo', [
     'TẠM DỪNG — khi nào cần, anh Tung sẽ nói cụ thể áo nào, tăng lên bao nhiêu'], false, ''],
   [9, 'Check camp-A để tạo quảng cáo Key', [
